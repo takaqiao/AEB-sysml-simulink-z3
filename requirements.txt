@@ -1,0 +1,16 @@
+# 此文件定义了需要通过 Pip 安装的标准Python包
+# 安装命令: pip install -r requirements.txt
+
+# --- 核心环境 ---
+jupyterlab>=4.0.0      # JupyterLab交互式开发环境
+
+# --- 数据处理与分析 ---
+pandas>=2.2.0          # 强大的数据分析库
+matplotlib>=3.8.0      # 基础绘图库
+seaborn>=0.13.0        # 基于matplotlib的更美观的绘图库
+plotly>=5.22.0         # 强大的交互式绘图库
+
+# --- 工具与集成 ---
+graphviz>=0.20.0 # 在Python中调用Graphviz的接口
+lxml>=5.2.0           # 用于处理XML文件 (例如导出到UPPAAL)
+matlabengine          # 用于在Python中调用MATLAB (需要MATLAB已安装)
