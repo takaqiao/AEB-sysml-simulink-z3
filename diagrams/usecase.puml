@@ -1,0 +1,86 @@
+@startuml AEB_UseCase_Diagram
+
+' 整体从左向右布局，模块水平排列
+top to bottom direction
+
+skinparam linetype ortho
+skinparam monochrome true
+skinparam shadowing false
+skinparam roundCorner 8
+skinparam padding 12
+skinparam dpi 150
+skinparam defaultFontName "SimSun"
+
+title AEB 系统用例图 (Use Case Diagram)
+
+'--------------------------------------------------------------------------------
+' 参与者（构造型）
+'--------------------------------------------------------------------------------
+rectangle "车辆系统" as VehicleSystems << (S,#ADD1B2) 系统 >>
+actor "驾驶员"    as Driver
+rectangle "前方车辆"  as LeadVehicle       << (E,#ADD1B2) 环境 >>
+
+'--------------------------------------------------------------------------------
+' 系统边界及内部模块
+'--------------------------------------------------------------------------------
+rectangle "AEB 系统" as AEB {
+  
+  ' 顶层用例
+  (规避/缓解前方碰撞) as UC1
+  
+  ' 三个水平并排的子系统模块
+  rectangle "环境感知" as EnvSense {
+    (监控前方环境)       as UC2
+    (融合传感器数据)     as UC6
+  }
+  rectangle "风险评估" as RiskEval {
+    (评估碰撞风险)       as UC3
+    (系统状态检测)       as UC7
+  }
+  rectangle "碰撞缓解" as CollisionMitigation {
+    (警示驾驶员)         as UC4
+    (施加紧急制动)       as UC5
+    (记录数据)           as UC8
+  }
+
+  ' 用于对齐：隐藏连线
+  UC1 -[hidden]-> EnvSense
+  UC1 -[hidden]-> RiskEval
+  UC1 -[hidden]-> CollisionMitigation
+}
+
+'--------------------------------------------------------------------------------
+' 参与者与顶层用例关系
+'--------------------------------------------------------------------------------
+Driver         --> UC1
+LeadVehicle    --> UC2
+VehicleSystems --> UC4
+VehicleSystems --> UC5
+VehicleSystems --> UC7
+
+'--------------------------------------------------------------------------------
+' 用例包含关系（<<include>>）
+'--------------------------------------------------------------------------------
+UC1 .> UC2 : <<include>>  
+UC1 .> UC3 : <<include>>  
+UC1 .> UC7 : <<include>>  
+UC2 .> UC6 : <<include>>  
+
+'--------------------------------------------------------------------------------
+' 用例扩展关系（<<extend>>）及触发条件
+'--------------------------------------------------------------------------------
+
+UC4 .> UC3 : <<extend>>
+
+
+UC5 .> UC3 : <<extend>>
+note on link
+  触发条件: abs(TTC) < PB/FBtime 且 TTC < 0
+end note
+
+UC8 .> UC1 : <<extend>>
+note top of link
+  触发条件: 系统触发警报或紧急制动事件时记录数据
+end note
+
+@enduml
