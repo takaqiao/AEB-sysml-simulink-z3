@@ -1,0 +1,13 @@
+--- AEB Controller Logic Verification with Z3 ---
+
+[INFO] Verifying property: 'The system should NOT apply full brakes when the situation is safe.'
+[INFO] Z3 will search for a counterexample where:
+[INFO]   1. decel == FBdecel
+[INFO]   AND 2. Not(And(If(TTC > 0, TTC, -TTC) < FBtime, TTC < 0))
+
+--- Z3 Solver Result ---
+Result: unsat
+
+[PROPERTY VERIFIED!] Z3 could not find any counterexample.
+This formally proves that based on the provided logic, the system will ONLY apply full brakes
+when the condition 'Abs(TTC) < FBtime && TTC < 0' is met.

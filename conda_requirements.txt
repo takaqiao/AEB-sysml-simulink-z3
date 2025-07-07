@@ -1,3 +1,0 @@
-jupyter-sysml-kernel
-graphviz
-nodejs
