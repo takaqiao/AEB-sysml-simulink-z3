@@ -1,7 +1,5 @@
 # AEB 系统：基于模型的系统工程全流程实践
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-
 ## 1. 项目概述 (Project Overview)
 
 本项目完整地展示了如何运用**基于模型的系统工程 (Model-Based Systems Engineering, MBSE)** 的思想，对一个**自动紧急制动 (AEB)** 安全关键系统进行从概念到验证的全流程开发。
@@ -55,8 +53,6 @@
 - **结构 (Structure)**: 通过块定义图 (BDD) 和内部块图 (IBD)，我们设计了系统的静态架构。这包括定义`Car`, `AEB_Controller`, `Sensor`等核心组件，以及它们之间的数据接口 (`iSensorData`, `iCarOutputs`等)。
 - **行为 (Behavior)**: 我们使用状态机图 (State Machine Diagram) 精确地描述了`AEB_Controller`的核心决策逻辑，该逻辑直接基于原始报告中的`Stateflow`模型，包含了`Default`, `FCW`, `Partial_Braking1/2`, 和 `Full_Braking`等状态。
 
-> 欲了解详细的 SysML 模型设计，请参阅文档: `diagrams/sysml_readme.docx`。
-
 ### 4.2 动态仿真 (Simulink)
 
 我们对现有的 Simulink 模型进行了深入分析，识别出了其无法正常工作的核心原因。
@@ -68,8 +64,6 @@
   3.  **接口不匹配**: 控制器输出的“减速度(a)”与车辆模型需要的“制动力(F)”物理单位不匹配。
 - **优化策略**: 我们提出了一套包含**实现制动执行器**、**插入 Unit Delay 打破代数环**和**构建闭环测试场景**的完整优化方案。
 
-> 欲了解详细的 Simulink 模型分析与优化策略，请参阅文档: `simulink/simulink_readme.docx`。
-
 ### 4.3 形式化验证 (Z3)
 
 为了给系统的安全性提供数学级别的保证，我们对`AEB_Controller`的核心逻辑进行了形式化验证。
@@ -77,8 +71,6 @@
 - **验证属性**: 我们验证了一个关键的安全属性：“系统绝不应该在情况安全时，却错误地执行了全力制动”。
 - **验证策略**: 采用“证明-by-反例”的策略，我们要求 Z3 求解器去寻找是否存在一个场景，能同时满足“系统全力制动”和“情况是安全的”这两个相互矛盾的条件。
 - **验证结果**: Z3 返回`unsat`（不可满足），这意味着它无法找到任何反例。这从数学上**证明**了我们的控制器逻辑是健全的，不会发生危险的“幽灵刹车”。
-
-> 欲了解详细的验证过程、代码和结果解读，请参阅文档: `verification-z3/verireadme.docx`。
 
 ---
 
@@ -122,20 +114,3 @@ pip install -r requirements.txt
     - 观察输出结果，应显示 `Result: unsat`，代表安全属性验证通过。
 
 ---
-
-## 6. 未来工作与贡献 (Future Work & Contribution)
-
-本项目为后续的开发和研究打下了坚实的基础，未来的工作可以围绕以下几个方向展开：
-
-- **模型优化**: 根据`simulink_readme.docx`中的策略，完成 Simulink 模型的闭环改造，并进行仿真测试，观察系统在不同工况下的性能。
-- **扩展验证**: 使用 Z3 验证更多的系统属性，特别是活性属性（Liveness），例如：“如果 TTC 持续处于危险区域，系统是否**最终必须**会进入制动状态？”
-- **集成 UPPAAL**: 将 SysML 状态机模型导出至 UPPAAL 模型检查工具，进行带**实时时间约束**的验证，分析系统的实时性能。
-- **增加场景**: 在 Simulink 中增加更复杂的测试场景，如前方车辆紧急刹车、行人或非机动车“鬼探头”（Cut-in）等场景。
-
-欢迎团队成员提出建议、创建分支并贡献代码，共同完善这个项目。
-
----
-
-## 7. 许可证 (License)
-
-本项目采用 [MIT License](https://opensource.org/licenses/MIT) 授权。
