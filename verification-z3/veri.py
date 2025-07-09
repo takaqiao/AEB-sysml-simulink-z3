@@ -18,7 +18,7 @@ PB2decel = Real('PB2decel') # Parameter: The constant deceleration for Partial B
 PB1decel = Real('PB1decel') # Parameter: The constant deceleration for Partial Braking 1
 
 # 2. 将AEB状态机逻辑翻译为Z3约束
-# 我们根据 cfarrell_assign2.html 中的Stateflow图，将决策逻辑形式化。
+# 根据 AEB_Controller 中的Stateflow图，将决策逻辑形式化。
 # 核心逻辑是：根据TTC所处的区间，决定decel输出值。
 
 # 定义进入各个状态的条件 (Guards)
@@ -28,7 +28,7 @@ is_pb1_braking_zone  = And(Abs(TTC) < PB1time, TTC < 0)
 is_fcw_zone          = And(Abs(TTC) < FCWtime, TTC < 0)
 
 # 使用Z3的If(condition, then_value, else_value)来构建决策树
-# 这精确地模拟了状态机的“进入动作”(entry actions)
+# 模拟状态机的entry actions
 controller_logic = If(is_full_braking_zone, decel == FBdecel,
                    If(is_pb2_braking_zone, decel == PB2decel,
                    If(is_pb1_braking_zone, decel == PB1decel,
@@ -37,7 +37,7 @@ controller_logic = If(is_full_braking_zone, decel == FBdecel,
                    ))))
 
 # 3. 定义系统参数约束
-# 根据 cfarrell_assign2.html 中的测试参数，我们为制动等级设定具体值
+# 根据 AEB_Controller 中的测试参数，我们为制动等级设定具体值
 param_constraints = [
     FBdecel  == 9.8,
     PB2decel == 5.3,
@@ -79,7 +79,7 @@ print("\n--- Z3 Solver Result ---")
 print(f"Result: {result}")
 
 if result == sat:
-    # 如果结果是 sat (satisfiable)，说明Z3找到了一个反例！
+    # 如果结果是 sat (satisfiable)，说明Z3找到了一个反例
     print("\n[BUG FOUND!] Z3 found a scenario where the safety property is violated.")
     print("This means the system can apply full brakes under unsafe conditions.")
     print("Model that triggers the bug:")
